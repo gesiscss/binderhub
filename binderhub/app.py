@@ -20,7 +20,7 @@ from traitlets import Unicode, Integer, Bool, Dict, validate, TraitError, defaul
 from traitlets.config import Application
 
 from .base import Custom404
-from .builder import BuildHandler
+from .builder import BuildHandler, LaunchHandler
 from .launcher import Launcher
 from .registry import DockerRegistry
 from .main import MainHandler, ParameterizedMainHandler, LegacyRedirectHandler
@@ -263,6 +263,14 @@ class BinderHub(Application):
             return proposal.value + '/'
         return proposal.value
 
+    launch = Bool(
+        True,
+        help="""
+        To enable LaunchHandler and Launcher.
+        """,
+        config=True
+    )
+
     build_namespace = Unicode(
         'default',
         help="""
@@ -418,11 +426,14 @@ class BinderHub(Application):
         else:
             registry = None
 
-        self.launcher = Launcher(
-            parent=self,
-            hub_url=self.hub_url,
-            hub_api_token=self.hub_api_token,
-        )
+        if self.launch:
+            self.launcher = Launcher(
+                parent=self,
+                hub_url=self.hub_url,
+                hub_api_token=self.hub_api_token,
+            )
+        else:
+            self.launcher = None
 
         self.tornado_settings.update({
             "docker_push_secret": self.docker_push_secret,
@@ -484,6 +495,8 @@ class BinderHub(Application):
             handlers.insert(-1, (re.escape(self.extra_static_url_prefix) + r"(.*)",
                                  tornado.web.StaticFileHandler,
                                  {'path': self.extra_static_path}))
+        if self.launch:
+            handlers.insert(2, (r"/launch/([^/]+)/(.+)", LaunchHandler))
         handlers = self.add_url_prefix(self.base_url, handlers)
         self.tornado_app = tornado.web.Application(handlers, **self.tornado_settings)
 

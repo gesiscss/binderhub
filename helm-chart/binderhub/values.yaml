@@ -78,6 +78,7 @@ cors: &cors
 hub:
   apiToken:
   url:
+  launch: true
 
 jupyterhub:
   enabled: true

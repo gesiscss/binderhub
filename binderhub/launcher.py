@@ -25,6 +25,7 @@ SUFFIX_CHARS = string.ascii_lowercase + string.digits
 # Set length of suffix. Number of combinations = SUFFIX_CHARS**SUFFIX_LENGTH = 36**8 ~= 2**41
 SUFFIX_LENGTH = 8
 
+
 class Launcher(LoggingConfigurable):
     """Object for encapsulating launching an image for a user"""
 
@@ -82,7 +83,6 @@ class Launcher(LoggingConfigurable):
         from https://github.com/minrk/binder-example.git
         """
         # start with url path
-        print
         if '://' not in repo and _ssh_repo_pat.match(repo):
             # ssh url
             path = repo.split(':', 1)[1]

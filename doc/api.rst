@@ -4,13 +4,14 @@ BinderHub API Documentation
 Endpoint
 --------
 
-There's one API endpoint, which is:
+There's two API endpoints, which are:
 
 ::
 
     /build/<provider>/<spec>
+    /launch/<provider>/<spec>
 
-Even though it says **build** it is actually performs **launch**.
+**launch** performs both build and launch.
 
 Provider
 --------

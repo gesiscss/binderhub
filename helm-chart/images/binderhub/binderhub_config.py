@@ -41,6 +41,7 @@ if os.path.exists('/etc/binderhub/config/binder.appendix'):
 
 c.BinderHub.hub_url = get_config('binder.hub-url')
 c.BinderHub.hub_api_token = os.environ['JUPYTERHUB_API_TOKEN']
+c.BinderHub.launch = get_config('binder.launch', True)
 
 c.BinderHub.google_analytics_code = get_config('binder.google-analytics-code', None)
 google_analytics_domain = get_config('binder.google-analytics-domain', None)

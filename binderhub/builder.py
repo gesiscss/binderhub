@@ -160,7 +160,7 @@ class BuildHandler(BaseHandler):
             'message': message + '\n',
         })
 
-    async def get(self, provider_prefix, _unescaped_spec):
+    async def get(self, provider_prefix, _unescaped_spec, launch=False):
         """Get a built image for a given spec and repo provider.
 
         Different repo providers will require different spec information. This
@@ -170,10 +170,11 @@ class BuildHandler(BaseHandler):
         ----------
             provider_prefix : str
                 the nickname for a repo provider (i.e. 'gh')
-            spec:
+            _unescaped_spec:
                 specifies information needed by the repo provider (i.e. user,
                 repo, ref, etc.)
-
+            launch: bool
+                launch after build or not
         """
         # re-extract spec from request.path
         # get the original, raw spec, without tornado's unquoting
@@ -210,7 +211,8 @@ class BuildHandler(BaseHandler):
         if provider.is_banned():
             await self.emit({
                 'phase': 'failed',
-                'message': 'Sorry, {} has been temporarily disabled from launching. Please contact admins for more info!'.format(spec)
+                'message': 'Sorry, {} has been temporarily disabled from launching. '
+                           'Please contact admins for more info!'.format(spec)
             })
             return
 
@@ -261,17 +263,27 @@ class BuildHandler(BaseHandler):
             else:
                 image_found = True
 
-        # Launch a notebook server if the image already is built
         kube = self.settings['kubernetes_client']
-
-        if image_found:
-            await self.emit({
-                'phase': 'built',
-                'imageName': image_name,
-                'message': 'Found built image, launching...\n'
-            })
-            await self.launch(kube)
-            return
+        if launch:
+            # Launch a notebook server if the image already is built
+            if image_found:
+                await self.emit({
+                    'phase': 'built',
+                    'imageName': image_name,
+                    'message': 'Found built image, launching...\n'
+                })
+                # TODO await build_post_hook
+                await self.launch(kube)
+                return
+        elif image_found:
+            if image_found:
+                await self.emit({
+                    'phase': 'built',
+                    'imageName': image_name,
+                    'message': 'Found built image.\n'
+                })
+                # TODO await build_post_hook
+                return
 
         # Prepare to build
         q = Queue()
@@ -368,8 +380,10 @@ class BuildHandler(BaseHandler):
         # Launch after building an image
         if not failed:
             BUILD_TIME.labels(status='success', **self.metric_labels).observe(time.perf_counter() - build_starttime)
-            with LAUNCHES_INPROGRESS.track_inprogress():
-                await self.launch(kube)
+            # TODO await build_post_hook
+            if launch:
+                with LAUNCHES_INPROGRESS.track_inprogress():
+                    await self.launch(kube)
 
         # Don't close the eventstream immediately.
         # (javascript) eventstream clients reconnect automatically on dropped connections,
@@ -479,3 +493,8 @@ class BuildHandler(BaseHandler):
         }
         event.update(server_info)
         await self.emit(event)
+
+
+class LaunchHandler(BuildHandler):
+    async def get(self, provider_prefix, _unescaped_spec, launch=True):
+        return super(LaunchHandler, self).get(provider_prefix, _unescaped_spec, launch)

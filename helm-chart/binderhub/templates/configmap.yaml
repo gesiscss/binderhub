@@ -34,6 +34,7 @@ data:
   binder.retries.delay: {{ .Values.retries.delay | quote }}
 
   binder.hub-url: {{ .Values.hub.url | quote }}
+  binder.launch: {{ .Values.launch | quote }}
   binder.base_url: {{ .Values.baseUrl | quote }}
 
   {{ if .Values.github.hostname -}}
