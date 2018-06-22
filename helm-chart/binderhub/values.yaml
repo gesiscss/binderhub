@@ -76,6 +76,7 @@ cors: &cors
   allowOrigin:
 
 hub:
+  apiToken:
   url:
 
 jupyterhub:
