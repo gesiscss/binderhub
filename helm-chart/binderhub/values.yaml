@@ -80,6 +80,7 @@ hub:
   url:
 
 jupyterhub:
+  enabled: true
   cull:
     enabled: true
     users: true
