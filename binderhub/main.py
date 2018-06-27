@@ -15,6 +15,7 @@ class MainHandler(BaseHandler):
         self.render_template(
             "index.html",
             base_url=self.settings['base_url'],
+            launch_after_build=self.settings['launch'],
             submit=False,
             google_analytics_code=self.settings['google_analytics_code'],
             google_analytics_domain=self.settings['google_analytics_domain'],
@@ -47,6 +48,7 @@ class ParameterizedMainHandler(BaseHandler):
         self.render_template(
             "loading.html",
             base_url=self.settings['base_url'],
+            launch_after_build=self.settings['launch'],
             provider_spec='{}/{}'.format(provider_prefix, spec),
             filepath=self.get_argument('filepath', None),
             urlpath=self.get_argument('urlpath', None),

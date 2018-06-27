@@ -2,6 +2,7 @@
 
 {% block head %}
 <meta id="base-url" data-url="{{base_url}}">
+<meta id="launch_after_build" data-url="{{launch_after_build}}">
 <script src="{{static_url("dist/bundle.js")}}"></script>
 {{ super() }}
 {% endblock head %}

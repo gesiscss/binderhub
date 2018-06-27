@@ -19,7 +19,7 @@ import 'event-source-polyfill';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap-theme.min.css';
 import '../index.css';
-
+// TODO how to update, divide build/launch code here? if not launch??
 // FIXME: Can not seem to import this addon from npm
 // See https://github.com/xtermjs/xterm.js/issues/1018 for more details
 import {fit} from './vendor/xterm/addons/fit';
@@ -66,6 +66,7 @@ Image.prototype.changeState = function(state, data) {
 };
 
 Image.prototype.fetch = function() {
+    // TODO build or launch
     var apiUrl = BASE_URL + 'build/' + this.provider_spec;
     this.eventSource = new EventSource(apiUrl);
     var that = this;
