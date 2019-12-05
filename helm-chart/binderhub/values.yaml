@@ -53,6 +53,8 @@ extraConfig: {}
 cors: &cors
   allowOrigin:
 
+# TODO https://github.com/jupyterhub/zero-to-jupyterhub-k8s/compare/b0d70c2...TODO
+# TODO update jupyterhub: part according to new jhub chart, if necessary.
 jupyterhub:
   cull:
     enabled: true
